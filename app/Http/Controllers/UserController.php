@@ -17,11 +17,11 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function set_session() {
-        $cart_items = collect([]);
-        session()->put('cart_items', $cart_items);
-        return redirect()->route('homepage');
-    }
+    // public function set_session() {
+    //     $cart_items = collect([]);
+    //     session()->put('cart_items', $cart_items);
+    //     return redirect()->route('homepage');
+    // }
 
     public function homepage()
     {
@@ -117,6 +117,10 @@ class UserController extends Controller
         // For Guest User
         else
         {
+            if (!session()->has('cart_items')) {
+                $cart_items = collect([]);
+                session()->put('cart_items', $cart_items);
+            }
             $flag = 'inc';
             $cart_items = session()->get('cart_items');
             foreach ($cart_items as $cart_items_key => $values) {
@@ -171,6 +175,74 @@ class UserController extends Controller
 
             return redirect()->back();
         }
+    }
+
+    public function dec_product($productId) {
+        // For Logged In User
+        if (session()->has('id')) {
+            $cart = Cart::where('id', $productId)
+                        ->select('quantity')
+                        ->get()
+                        ->toArray();
+            $quantity = $cart[0]['quantity'];
+            
+            if ($quantity > 1) {
+                Cart::where('id', $productId)->update([
+                    'quantity' => \DB::raw('quantity-1'),
+                ]);
+                $cart_value = session()->get('cart_value') - 1;
+                session()->put('cart_value', $cart_value);
+            }
+        }
+        // For Guest User
+        else {
+            if (is_array(session()->get('cart_items'))) {
+                $cart_items = session()->get('cart_items');
+            }
+            else {
+                $cart_items = session()->get('cart_items')->toArray();
+            }
+            foreach ($cart_items as $key => $values) {
+                if (array_search($productId, $values)) {
+                    if ($cart_items[$key]['quantity'] > 1) {
+                        $cart_items[$key]['quantity'] -= 1;
+                    }
+                }
+            }
+            
+            session()->put('cart_items', $cart_items);
+        }
+
+        return redirect()->route('show-cart');
+    }
+
+    public function inc_product($productId) {
+        // For Logged In User
+        if (session()->has('id')) {
+            Cart::where('id', $productId)->update([
+                'quantity' => \DB::raw('quantity+1'),
+            ]);
+            $cart_value = session()->get('cart_value') + 1;
+            session()->put('cart_value', $cart_value);
+        }
+        // For Guest User
+        else {
+            if (is_array(session()->get('cart_items'))) {
+                $cart_items = session()->get('cart_items');
+            }
+            else {
+                $cart_items = session()->get('cart_items')->toArray();
+            }
+            foreach ($cart_items as $key => $values) {
+                if (array_search($productId, $values)) {
+                    $cart_items[$key]['quantity'] += 1;
+                }
+            }
+
+            session()->put('cart_items', $cart_items);
+        }
+
+        return redirect()->route('show-cart');
     }
 
     public function remove_from_cart($id) {
@@ -429,6 +501,9 @@ class UserController extends Controller
             $total_price =  $subtotal_price + 20;
             session()->put('total_price', $total_price);
         }
+
+        // echo "<pre>";
+        // echo print_r(session()->get('cart_items')->toArray()); die;
 
         return view('user.cart.index', ['cart_items' => $cart_items, 'subtotal_price' => $subtotal_price, 'total_price' => $total_price]);
     }

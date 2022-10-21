@@ -46,21 +46,36 @@
                         </div>
                       </td>
                       <td class="pl-0 py-6">
-                        {{-- <div class="input-group position-relative w-100px">
-                          <a href="{{ route('dec-product', $items['productId']) }}" class="down position-absolute pos-fixed-left-center pl-2 z-index-2"><i
+                        @if (isset($items['productId']))
+                        <div class="input-group position-relative w-100px">
+                          <a href="{{ route('dec-product', $items['productId']) }}" class="position-absolute pos-fixed-left-center pl-2 z-index-2"><i
                                                   class="far fa-minus"></i></a>
-                          <input name="number[]" type="number"
+                          <input name="text" type="number"
                                                  class="form-control form-control-sm w-100 px-6 fs-16 text-center input-quality bg-transparent h-35px"
                                                  value="{{ $items['quantity'] }}"
                                                  required>
                           <a href="{{ route('inc-product', $items['productId']) }}"
-                                             class="up position-absolute pos-fixed-right-center pr-2 z-index-2"><i
+                                             class="position-absolute pos-fixed-right-center pr-2 z-index-2"><i
                                                   class="far fa-plus"></i>
                           </a>
-                        </div> --}}
+                        </div>
+                        @else
+                        <div class="input-group position-relative w-100px">
+                          <a href="{{ route('dec-product', $items['id']) }}" class="position-absolute pos-fixed-left-center pl-2 z-index-2"><i
+                                                  class="far fa-minus"></i></a>
+                          <input name="text" type="number"
+                                                 class="form-control form-control-sm w-100 px-6 fs-16 text-center input-quality bg-transparent h-35px"
+                                                 value="{{ $items['quantity'] }}"
+                                                 required>
+                          <a href="{{ route('inc-product', $items['id']) }}"
+                                             class="position-absolute pos-fixed-right-center pr-2 z-index-2"><i
+                                                  class="far fa-plus"></i>
+                          </a>
+                        </div>
+                        @endif
                         <div class="input-group position-relative w-100px">
                           {{-- @if (isset($items['quantity'])) --}}
-                          <span class="font-weight-bold">Quantity&#160;:&#160;</span> {{ $items['quantity'] }}
+                          {{-- <span class="font-weight-bold">Quantity&#160;:&#160;</span> {{ $items['quantity'] }} --}}
                           {{-- @endif --}}
                         </div>
                       </td>

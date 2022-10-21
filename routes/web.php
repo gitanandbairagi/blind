@@ -14,7 +14,7 @@ use App\Http\Controllers\UserController;
 |
 */
 // GET Route
-Route::get('setblind',[UserController::class,'set_session'])->name('set-session');
+// Route::get('setblind',[UserController::class,'set_session'])->name('set-session');
 Route::get('login',[UserController::class,'login']);
 Route::get('/',[UserController::class,'homepage'])->name('homepage');
 Route::get('google',[UserController::class,'redirect_to_google'])->name('redirect-to-google');
@@ -37,8 +37,8 @@ Route::post('edit-billing-address',[UserController::class,'edit_billing_address'
 Route::post('edit-shipping-address',[UserController::class,'edit_shipping_address'])->name('edit-shipping-address');
 Route::get('account-payment-method',[UserController::class,'account_payment_method'])->name('account-payment-method');
 Route::get('cart',[UserController::class,'show_cart'])->name('show-cart');
-Route::get('dec-product',[UserController::class,'dec_product'])->name('dec-product');
-Route::get('inc-product',[UserController::class,'inc_product'])->name('inc-product');
+Route::get('dec-product/{product_id}',[UserController::class,'dec_product'])->name('dec-product');
+Route::get('inc-product/{product_id}',[UserController::class,'inc_product'])->name('inc-product');
 Route::get('product/{id}',[UserController::class,'show_product'])->name('show-product');
 Route::get('get-fabric-details',[UserController::class,'get_fabric_details'])->name('get-fabric-details');
 Route::get('checkout',[UserController::class,'checkout'])->name('checkout');
