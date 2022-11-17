@@ -22,12 +22,6 @@ class AdminBasicAuth
             return redirect()->route('admin-login');
 
         }else{
-
-            if(Auth::user()->role_id != 1){
-
-                return redirect()->back();
-            }
-
             return $next($request);
         }
     }

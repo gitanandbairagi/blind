@@ -2,7 +2,8 @@
     <div class="container container-xxl">
       <div class="row">
         <div class="col-lg mb-6 mb-lg-0">
-          <a href="#" class="footer-logo d-block"><img src="{{url('assets/user/images/logo.png')}}" alt="Furnitor')}}"></a>
+          <a href="#" class="footer-logo d-block"><img src="{{url('assets/user/images/logo-2.png')}}" alt="Furnitor')}}"></a>
+          <p style="font-size:13px;color:black;font-weight:500;text-align:center;margin-top:1rem">We are your trusted and proudly New Zealand owned blind manufacturers. We promise quality products for our customers.</p>
         </div>
         <div class="col-sm-6 col-lg mb-6 mb-lg-0">
           <ul class="list-unstyled mb-0">

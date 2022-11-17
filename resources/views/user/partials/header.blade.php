@@ -1,10 +1,10 @@
-  <header class="main-header navbar-dark header-sticky header-sticky-smart position-absolute fixed-top header-04">
-    <div class="topbar topbar-border d-none d-xl-block">
-      <div id="headerOffer" class="container container-xxl">
+<header class="main-header navbar-dark header-sticky header-sticky-smart position-absolute fixed-top header-04">
+    {{-- <div class="topbar topbar-border d-none d-xl-block"> --}}
+      {{-- <div id="headerOffer" class="container container-xxl">
         <p class="mb-0 py-2 text-white font-weight-600 text-center">Free Express Shipping on all New Zealand order over
           $200</p>
-      </div>
-    </div>
+      </div> --}}
+    {{-- </div> --}}
     <div class="sticky-area">
       <div class="container container-xxl">
         <div class="d-none d-xl-block">
@@ -104,6 +104,14 @@
                     </li>
                   </ul> --}}
                 </li>
+                
+                <li
+      class="nav-item dropdown-item-docs dropdown py-2 py-xl-5 px-0 px-xl-4">
+                  <a class="nav-link p-0"
+         href="{{ route('about-us') }}">
+                    About
+                  </a>
+                </li>
                 <li aria-haspopup="true" aria-expanded="false"
       class="nav-item dropdown-item-shop dropdown py-2 py-xl-5 px-0 px-xl-4">
                   <a class="nav-link dropdown-toggle p-0"
@@ -114,267 +122,73 @@
                   <div class="dropdown-menu dropdown-menu-xl px-0 pb-10 pt-5 dropdown-menu-listing overflow-hidden x-animated x-fadeInUp">
                     <div class="container container-xxl">
                       <div class="row no-gutters w-100">
-                        <div class="col-3">
+                        <div class="col-2">
                           <!-- Heading -->
                           <h4 class="dropdown-header text-dark fs-16 mb-2 lh-1">
                             Blinds
                           </h4>
                           <!-- List -->
+                          @php
+                              $products = ['roller blinds', 'vertical blinds', 'venetian blinds', 'dual blinds', 'motorized blinds']
+                          @endphp
+                          @foreach ($products as $product)
+                          {{-- <div class="dropdown-item">
+                            <a class="dropdown-link" href="{{ route('show-category', str_replace(" ", "-", $product['name'])) }}">
+                              {{ strtoupper($product['name']) }}
+                            </a>
+                          </div> --}}
                           <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Roller Blinds
+                            <a class="dropdown-link" href="{{ route('show-product', str_replace(" ", "-", $product)) }}">
+                              {{ strtoupper($product) }}
                             </a>
                           </div>
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Timber & PVC Blinds NZ
-                            </a>
-                          </div>
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Vertical Blinds
-                            </a>
-                          </div>
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              25 MM Aluminum Venetian
-                            </a>
-                          </div>
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Acmeda Motorized Rollers
-                            </a>
-                          </div>
+                          @endforeach
                         </div>
-                        <div class="col-3">
-                          <!-- Heading -->
-                          <h4 class="dropdown-header text-dark fs-16 mb-2 lh-1">
-                            Curtains
-                          </h4>
-                          <!-- List -->
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Product Layout <sup>V1</sup>
-                            </a>
-                          </div>
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Product Layout <sup>V1</sup>
-                            </a>
-                          </div>
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Product Layout <sup>V1</sup>
-                            </a>
-                          </div>
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Product Layout <sup>V1</sup>
-                            </a>
-                          </div>
-                          <div class="dropdown-item">
-                            <a class="dropdown-link" href="#">
-                              Product Layout <sup>V1</sup>
-                            </a>
-                          </div>
-                        </div>
-                        <div class="col-4 h-100">
-                          <div class="card border-0 mt-2">
-                            <img src="assets/user/images/menu.jpg" alt="Image Menu" class="card-img">
-                            <div class="card-img-overlay d-flex flex-column pt-6 pb-5">
-                              <p class="text-white font-weight-600 text-center mb-0">
-                                Spring Season
-                              </p>
-                              <h3 class="text-white fs-40 text-center">Holiday Chairs</h3>
+                        @php
+                            $product_imgs = ['roller-blind.jpeg', 'vertical-blind.jpg', 'venetian-blind.png', 'dual-blind.jpg', 'motorized-blind.png'];
+                        @endphp
+                        @foreach ($product_imgs as $img)
+                        <div class="col-2 ">
+                          <div class="card border-0 mt-4 ml-2">
+                            <img src="{{ url('assets/user/images/'.$img) }}" style="height: 150px;width:200px;" alt="Image Menu" class="card-img">  
+                            <!-- <img src="" alt="Image Menu" class="card-img" style="height: 300px;"> -->
+                            <div class="card-img-overlay d-flex flex-column pt-2 pb-2">
+                              <!-- <p class="text-white font-weight-600 text-center mb-0">
+                                Blinds
+                              </p> -->
+                              <!-- <h3 class="text-white fs-40 text-center">BLIND</h3> -->
                               <div class="mt-auto text-center">
-                                <a href="shop-page-03.html" class="btn btn-primary">shop
-                                  now</a>
+                                {{-- <a href="{{ route('show-category', str_replace(" ", "-", (session()->get('products'))[$i]['name'])) }}" class="btn btn-primary">shop
+                                  now</a> --}}
                               </div>
                             </div>
                           </div>
                         </div>
+                        @endforeach
+                         
                       </div>
                     </div>
                   </div>
                 </li>
-                {{-- <li aria-haspopup="true" aria-expanded="false"
-      class="nav-item dropdown-item-pages dropdown py-2 py-xl-5 px-0 px-xl-4">
-                  <a class="nav-link dropdown-toggle p-0"
-         href="#" data-toggle="dropdown" >
-                    Pages
-                    <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu pt-3 pb-0 pb-xl-3 x-animated x-fadeInUp">
-                    <li class="dropdown-item dropdown dropright">
-                      <a
-                 class="dropdown-link dropdown-toggle"
-                 href="#" data-toggle="dropdown" >
-                        About us
-                      </a>
-                      <ul class="dropdown-menu dropdown-submenu pt-3 pb-0 pb-xl-3 x-animated x-fadeInLeft">
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="about-us-01.html">About Us 01</a>
-                        </li>
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="about-us-02.html">About Us 02</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li class="dropdown-item dropdown dropright">
-                      <a
-                 class="dropdown-link dropdown-toggle"
-                 href="#" data-toggle="dropdown" >
-                        Contact
-                      </a>
-                      <ul class="dropdown-menu dropdown-submenu pt-3 pb-0 pb-xl-3 x-animated x-fadeInLeft">
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="contact-01.html">Contact 01</a>
-                        </li>
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="contact-02.html">Contact 02</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li class="dropdown-item">
-                      <a
-                 class="dropdown-link"
-                 href="faqs.html" >
-                        FAQs
-                      </a>
-                    </li>
-                    <li class="dropdown-item">
-                      <a
-                 class="dropdown-link"
-                 href="service.html" >
-                        Service
-                      </a>
-                    </li>
-                    <li class="dropdown-item">
-                      <a
-                 class="dropdown-link"
-                 href="login-register.html" >
-                        Login Register
-                      </a>
-                    </li>
-                  </ul>
-                </li> --}}
                 <li aria-haspopup="true" aria-expanded="false"
       class="nav-item dropdown-item-blog dropdown py-2 py-xl-5 px-0 px-xl-4">
                   <a class="nav-link p-0"
          href="{{ route('contact-us') }}">
                     Contact
                   </a>
-                  {{-- <ul class="dropdown-menu pt-3 pb-0 pb-xl-3 x-animated x-fadeInUp">
-                    <li class="dropdown-item dropdown dropright">
-                      <a
-                 class="dropdown-link dropdown-toggle"
-                 href="#" data-toggle="dropdown" >
-                        Blog Listing
-                      </a>
-                      <ul class="dropdown-menu dropdown-submenu pt-3 pb-0 pb-xl-3 x-animated x-fadeInLeft">
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="blog-layout-01.html">Blog Layout 01</a>
-                        </li>
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="blog-layout-02.html">Blog Layout 02</a>
-                        </li>
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="blog-layout-03.html">Blog Layout 03</a>
-                        </li>
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="blog-layout-04.html">Blog Layout 04</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li class="dropdown-item dropdown dropright">
-                      <a
-                 class="dropdown-link dropdown-toggle"
-                 href="#" data-toggle="dropdown" >
-                        Blog Post
-                      </a>
-                      <ul class="dropdown-menu dropdown-submenu pt-3 pb-0 pb-xl-3 x-animated x-fadeInLeft">
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="blog-post-01.html">Blog Post 01</a>
-                        </li>
-                        <li class="dropdown-item">
-                          <a class="dropdown-link" href="blog-post-02.html">Blog Post 02</a>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul> --}}
-                </li>
-                <li
-      class="nav-item dropdown-item-docs dropdown py-2 py-xl-5 px-0 px-xl-4">
-                  <a class="nav-link p-0"
-         href="{{ route('about-us') }}">
-                    About Us
-                  </a>
-                  {{-- <div class="dropdown-menu px-0 pt-3 dropdown-menu-docs x-animated x-fadeInUp">
-                    <div class="dropdown-body">
-                      <a class="dropdown-item py-1"
-         href="docs/getting-started/dev-environment-setup.html">
-                        <div class="media">
-                          <div class="fs-20 mr-3">
-                            <i class="fal fa-file-alt"></i>
-                          </div>
-                          <div class="media-body">
-                            <span class="d-block lh-15">Documentation</span>
-                            <small class="d-block">Kick-start customization</small>
-                          </div>
-                        </div>
-                      </a>
-                      <div class="dropdown-divider m-0"></div>
-                      <a class="dropdown-item py-1"
-         href="docs/content/typography.html">
-                        <div class="media">
-                          <div class="fs-20 mr-3">
-                            <i class="fal fa-layer-group"></i>
-                          </div>
-                          <div class="media-body">
-                            <span class="d-block lh-15">UI Kit<span
-                          class="badge badge-danger ml-2">50+</span></span>
-                            <small class="d-block">Flexible components</small>
-                          </div>
-                        </div>
-                      </a>
-                      <div class="dropdown-divider m-0"></div>
-                      <a class="dropdown-item py-1"
-         href="docs/getting-started/changelog.html">
-                        <div class="media">
-                          <div class="fs-20 mr-3">
-                            <i class="fal fa-edit"></i>
-                          </div>
-                          <div class="media-body">
-                            <span class="d-block lh-15">Changelog<span
-                          class="badge badge-success ml-2">v1.1.0</span></span>
-                            <small class="d-block">Regular updates</small>
-                          </div>
-                        </div>
-                      </a>
-                      <div class="dropdown-divider m-0"></div>
-                      <a class="dropdown-item py-1"
-         href="https://sp.g5plus.net/" target="_blank">
-                        <div class="media">
-                          <div class="fs-20 mr-3">
-                            <i class="fal fa-life-ring"></i>
-                          </div>
-                          <div class="media-body">
-                            <span class="d-block lh-15">Support</span>
-                            <small class="d-block">https://sp.g5plus.net/</small>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  </div> --}}
                 </li>
               </ul>
             </div>
             <div class="col-2 d-flex justify-content-center align-items-center">
               <a class="navbar-brand mx-0 d-block"
                          href="{{ route('homepage') }}">
-                <img id="normalLogo" src="{{ url('assets/user/images/logo-white.png') }}" alt="Furnitor"
+                {{-- <img id="normalLogo" src="{{ url('assets/user/images/logo-white.png') }}" alt="Blind Designers"
                                class="normal-logo">
-                <img id="stickyLogo" src="{{ url('assets/user/images/logo.png') }}" alt="Furnitor"
+                <img id="stickyLogo" src="{{ url('assets/user/images/logo.png') }}" alt="Blind Designers"
+                               class="sticky-logo"> --}}
+                <img id="normalLogo" src="{{ url('assets/user/images/logo-blind-white.png') }}" alt="Blind Designers"
+                               class="normal-logo">
+                <img id="stickyLogo" src="{{ url('assets/user/images/logo-blind.png') }}" alt="Blind Designers"
                                class="sticky-logo">
               </a>
             </div>
@@ -436,9 +250,9 @@
               <span class="fs-24 toggle-icon"></span>
             </button>
             <a class="navbar-brand d-inline-block mx-auto" href="{{ route('homepage') }}">
-              <img src="images/logo-white.png" alt="Furnitor"
+              <img src="{{ url('assets/user/images/logo-blind-white.png') }}" style="width: 80%" alt="Blind Designers"
                            class="normal-logo">
-              <img src="images/logo.png" alt="Furnitor"
+              <img src="{{ url('assets/user/images/logo-blind.png') }}" style="width: 80%" alt="Blind Designers"
                            class="sticky-logo">
             </a>
             <a href="#search-popup" data-gtf-mfp="true"

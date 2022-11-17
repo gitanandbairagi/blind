@@ -6,10 +6,10 @@
 
 <main id="content">
     <section class="d-flex flex-column bg-img-cover-center vh-100 custom-height-sm pt-xxl-13"
-       style="background-image: url({{'/blind/assets/user/images/bg-home-04.jpg'}})">
+       style="background-image: url({{'/blind/assets/user/images/banner-5.jpg'}})">
       <div class="d-flex flex-column h-100 align-items-center justify-content-center justify-content-xxl-start pt-xxl-13">
         <div class="container">
-          <p class="text-center text-white fs-20 font-weight-bold mb-4">Furnitor Story</p>
+          <p class="text-center text-white fs-20 font-weight-bold mb-4">Blinds Designer</p>
           <h1 class="fs-60 fs-lg-90 lh-1 text-center text-white">About Us</h1>
         </div>
       </div>
@@ -18,13 +18,10 @@
       <div class="container">
         <div class="row align-items-center no-gutters flex-md-row-reverse">
           <div class="col-md-6 pl-md-6 pl-lg-13 mb-6 mb-md-0">
-            <h2 class="fs-30 fs-md-60 mb-2">
-              Setting <br>
-               Industry
-            </h2>
-            <p class="mb-6"> Portland meggings chartreuse plaid palo santo, gluten-free ramps iPhone etsy salvia
-              cray kombucha
-              copper mug single-origin coffee.</p>
+            <h3 class="fs-30 fs-md-60 mb-2">
+            We Make Your Space Looking Fresh & Modern
+            </h3>
+            <p class="mb-6">We are your trusted and proudly New Zealand owned blind manufacturers. We promise quality products for our customers. We help our customers to choose right kind of blinds and shades to add character to their space. Our experienced team will help you to choose right blinds to fulfill your requirements. Our technical team will take measures and install the blinds on time.</p>
             <p class="counterup fs-60 text-primary font-weight-500 lh-13 mb-2" data-start="0"
                  data-end="12346" data-decimals="0"
                  data-duration="0" data-separator=",">12346
@@ -32,12 +29,13 @@
             <p class="text-primary font-weight-500">Satisfied customers worldwide and growing</p>
           </div>
           <div class="col-md-6">
-            <img src="{{ url('assets/user/images/b-14.jpg') }}" alt="Setting Industry Standards">
+            <img src="{{ url('assets/user/images/about-us.jpg') }}" alt="Setting Industry Standards">
           </div>
         </div>
       </div>
     </section>
-    <section class="pt-13">
+
+    <!-- <section class="pt-13">
       <div class="container">
         <div class="mb-8 mxw-110px mx-auto">
           <img src="{{ url('assets/user/images/logo_circle.png') }}" alt="Logo circle">
@@ -146,7 +144,7 @@
           {{-- end for loop --}}
         </div>
       </div>
-    </section>
+    </section> -->
   </main>
 
 @endsection

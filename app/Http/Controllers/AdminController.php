@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\Professional;
-use App\Models\Moreimages;
-use App\Models\Skill;
+use App\Models\NewProduct;
+use App\Models\Fabric;
+use App\Models\FabricImages;
 use Session;
 use Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,6 +20,7 @@ use Mail;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use PDF;
+use Carbon\Carbon;
 use App\Models\Event;
 use App\Models\StoreEvent;
 
@@ -81,35 +83,254 @@ class AdminController extends Controller
 	
 	public function login_post(Request $request)
 	{
-
 	$credentials = $request->only('email','password');
-	if(Auth::attempt($credentials)){
-	if(Auth::user()->role_id == 1){
-	$useLoginId=User::where(['email'=>$request->email])->get();
+		if(Auth::attempt($credentials)) {
+			$user = User::where(['email'=>$request->email])->get();
 
-	session()->put('admin-login-id',$useLoginId[0]->id);
-	return redirect(url('admin-dashboard'));
-
-	}else{
-	Session::flush();
-	Auth::logout();
-	\Session::put('err_msg','Invalid Username and Password.');
-	//return redirect(url('admin-login'));
-
-	return redirect()->route('admin-login');
-	}
-	}else{
-	\Session::put('err_msg','Invalid Username and Password.');
-	return redirect(url('admin-login'));
-	}
+			session()->put('admin-login-id', $user[0]->id);
+			return redirect(url('admin-dashboard'));
+		}
+		else {
+			$error = 'Invalid Username or Password.';
+			session()->flash('error', $error);
+			return redirect()->route('admin-login');
+		}
 	}
 
-   
-	  public function admin_dashboard()
-    {
-       return view('admin.dashboard');
+	public function admin_dashboard() {
+		$fabrics = Fabric::all()->toArray();
+		$fabric_images = FabricImages::all()->toArray();
+		$products = NewProduct::all()->toArray();
+		$data = [
+			'fabrics_count' => count($fabrics), 
+			'fabric_images_count' => count($fabric_images), 
+			'products_count' => count($products), 
+		];
+
+       return view('admin.dashboard', ['data' => $data]);
     }
+
+	public function view_fabrics() {
+		$fabrics = Fabric::select('id', 'name', 'created_at')
+						->orderBy('id', 'ASC')
+						->get()
+						->toArray();
+		// custom_print($fabrics);
+		return view('admin.fabric.index', ['fabrics' => $fabrics]);
+	}
+
+	public function add_fabric() {
+		return view('admin.fabric.add');
+	}
+
+	public function delete_fabric($fabric_name) {
+		$fabric_name = str_replace('-', ' ', $fabric_name);
+		$fabric = Fabric::where('name', $fabric_name)
+							->get()
+							->toArray();
+		$fabric_images = FabricImages::where('fabric_id', $fabric[0]['id'])
+									->get()
+									->toArray();
+		foreach ($fabric_images as $image) {
+			$test = FabricImages::where('name', '=', $image['name'])
+								->get()
+								->toArray();
+
+			if(count($test) == 1) {
+				if(file_exists('assets/user/images/'.$image['name'])) {
+					unlink('assets/user/images/'.$image['name']);
+				}
+			}
+		}
+
+		Fabric::where('name', $fabric_name)
+				->delete();
+
+		$success = ucwords($fabric_name).' has been Successfully Deleted';
+		return redirect()->back()->with('success', $success);
+	}
+
+	public function post_add_fabric(request $request) {
+		$request->validate(
+			[
+				'name' => 'required',
+				'files' => 'required',
+			],
+			[
+				'name.required' => 'The Fabric Name is Required',
+				'files.required' => 'The Fabric Color Images are Required',
+			]
+		);
+
+		$fabric_id = Fabric::insertGetId([
+			'name' => $request->name,
+			'price' => 0.12,
+			'created_at' => Carbon::now(),
+		]);
+
+		foreach ($request->file('files') as $file) {
+			$filename = $file->getClientOriginalName();
+			if (!File::exists($filename)) {
+				$file->move(base_path('\assets\user\images'), $filename);
+			}
+			$data = [
+				'name' => $filename,
+				'fabric_id' => $fabric_id,
+			];
+			FabricImages::insert($data);
+		}
+
+		$success = 'Fabric has been Succefully Added';
+		session()->flash('success', $success);
+		return redirect()->route('view-fabrics');
+	}
 	
+	public function post_add_image(Request $request) {
+		$request->validate(
+			[
+				'files' => 'required',
+			],
+			[
+				'files.required' => 'The Color Field is Required',
+			]
+		);
+
+		$fabric = Fabric::where('name', $request->fabric_name)
+							->get()
+							->toArray();
+		$fabric_id = $fabric[0]['id'];
+
+		foreach ($request->file('files') as $file) {
+			$filename = $file->getClientOriginalName();
+			if (!file_exists('assets/user/images/'.$filename)) {
+				$file->move(base_path('\assets\user\images'), $filename);
+			}
+			$data = [
+				'name' => $filename,
+				'fabric_id' => $fabric_id,
+			];
+			FabricImages::insert($data);
+		}
+		
+		$success = 'Fabric Color has been Succefully Added';
+		session()->flash('success', $success);
+		return redirect()->route('view-fabric-details', str_replace(' ', '-', $request->fabric_name));
+	}
+
+	public function view_products() {
+		$products = NewProduct::all()->toArray();
+		return view('admin.product.index', ['products' => $products]);
+	}
+
+	public function add_fabric_in_product($product_name) {
+		$product_name = str_replace('-', ' ', $product_name);
+		$fabrics = Fabric::all()->toArray();
+		$product_fabrics = NewProduct::where(['name' => $product_name])
+									->select('fabrics')
+									->get()
+									->toArray();
+		$product_fabrics = explode(',', $product_fabrics[0]['fabrics']);
+		foreach ($fabrics as $key => $fabric) {
+			$flag = 0;
+			foreach ($product_fabrics as $product_fabric) {
+				if ($fabric['name'] == $product_fabric) {
+					$flag = 1;
+				}
+			}
+			if ($flag == 1) {
+				unset($fabrics[$key]);
+			}
+		}
+
+		return view('admin.product.add', ['product_name' => $product_name, 'fabrics' => $fabrics]);
+	}
+
+	public function post_add_fabric_in_product(Request $request) {
+		$fabrics_str =  implode(',', $request->fabrics);
+		$fabrics_str =  ','.$fabrics_str;
+		NewProduct::where(['name' => $request->product_name])
+				->update([
+					'fabrics' => \DB::raw("CONCAT(fabrics,'$fabrics_str')")
+				], $fabrics_str);
+
+		$success = 'Fabrics are Successfully Linked to '.ucwords($request->product_name);
+		session()->flash('success', $success);
+		return redirect()->route('view-products');
+	}
+
+	public function remove_fabric($product_name) {
+		$product_name = str_replace('-', ' ', $product_name);
+		$fabrics = NewProduct::where(['name' => $product_name])
+									->select('fabrics')
+									->get()
+									->toArray();
+		$fabrics = explode(',', $fabrics[0]['fabrics']);
+		return view('admin.product.remove', ['product_name' => $product_name, 'fabrics' => $fabrics]);
+	}
+
+	public function post_remove_fabric(Request $request) {
+		$product_fabrics = NewProduct::where(['name' => $request->product_name])
+									->select('fabrics')
+									->get()
+									->toArray();
+		$product_fabrics = explode(',', $product_fabrics[0]['fabrics']);
+
+		custom_print($product_fabrics, false);
+		foreach ($request->fabrics as $fabric) {
+			$flag = 0;
+			foreach ($product_fabrics as $key => $product_fabric) {
+				if ($fabric == $product_fabric) {
+					$flag = 1;
+					$del = $key;
+				}
+			}
+			if ($flag == 1) {
+				unset($product_fabrics[$del]);
+			}
+		}
+		$product_fabrics = implode(',', $product_fabrics);
+
+		NewProduct::where(['name' => $request->product_name])
+					->update(['fabrics' => $product_fabrics]);
+
+		$success = 'Fabric has been Successfully Removed from '.ucwords($request->product_name);
+		session()->flash('success', $success);
+		return redirect()->route('view-products');
+	}
+
+	public function view_fabric_details($fabric_name) {
+		$fabric_name = str_replace('-', ' ', $fabric_name);
+		$fabric = Fabric::join('fabric_images', 'fabric_images.fabric_id', '=', 'fabrics.id')
+						->where(['fabrics.name' => $fabric_name])
+						->select('fabrics.name', 'fabrics.created_at', 'fabric_images.id', 'fabric_images.name as image')
+						->get()
+						->toArray();
+		
+		return view('admin.fabric.details', ['fabric_name' => $fabric_name, 'fabric' => $fabric]);
+	}
+
+	public function delete_image($fabric_image_name, $fabric_image_id) {
+		$test = FabricImages::where('name', '=', $fabric_image_name)
+							->get()
+							->toArray();
+		if(count($test) == 1) {
+			if(file_exists('assets/user/images/'.$fabric_image_name)) {
+				unlink('assets/user/images/'.$fabric_image_name);
+			}
+		}
+		$fab = FabricImages::where('id', '=', $fabric_image_id)
+					->delete();
+
+		$success = 'Color '.ucwords(strstr($fabric_image_name, '.', true)).' has been Successfully Deleted';
+		session()->flash('success', $success);
+		return redirect()->back();
+	}
+
+	public function view_add_image($fabric_name) {
+		$fabric_name = str_replace('-', ' ', $fabric_name);
+		return view('admin.fabric.addColor', ['fabric_name' => $fabric_name]);
+	}
+
 	public function professional()
     {
 		$data['professional']=Professional::orderby('id','desc')->get();
@@ -514,11 +735,11 @@ class AdminController extends Controller
 
 
 
-	public function logout()
+	public function admin_login()
 	{
 	Auth::logout();
 	Session::flush();
-	return redirect(url('admin-login'));
+	return redirect()->route('admin-login');
 	}
 	
     public function create()

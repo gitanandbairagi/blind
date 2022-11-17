@@ -38,14 +38,19 @@
             </form>
           </div>
           <div class="col-md-4 pl-xl-13 pl-md-6">
-            <p class="font-weight-bold text-primary mb-3">Address</p>
+            {{-- <p class="font-weight-bold text-primary mb-3">Address</p>
             <address class="mb-6">
               7895 Piermont Dr NE Albuquerque,<br>
                NM 198866, See Our Stores
-            </address>
-            <p class="font-weight-bold text-primary mb-2">Infomation</p>
-            <p class="mb-0">+391 (0)35 2568 4593</p>
-            <p class="mb-7">hello@domain.com</p>
+            </address> --}}
+            {{-- <p class="font-weight-bold text-primary mb-2">Infomation</p>
+            <p class="mb-0">027 200 3166 / 0210 262 2313</p> --}}
+            <p class="font-weight-bold text-primary mb-1 mt-1">Call us on</p>
+            <p class="mb-0">027 200 3166 / 0210 262 2313</p>
+            <p class="font-weight-bold text-primary mb-1 mt-1">Free Phone</p>
+            <p class="mb-0">09 390 1000</p>
+            <p class="font-weight-bold text-primary mb-1 mt-1">Email</p>
+            <p class="mb-0">info@blinddesigners.co.nz</p>
           </div>
         </div>
       </div>

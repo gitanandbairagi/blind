@@ -2,7 +2,7 @@
 
 @section('main-content')
 
-<div class="col-6">
+<div id="addressSection" class="col-sm-6">
     <h3 id="addAddressHeading" class="fs-24">Address Details</h3>
     @if (isset($addresses['billingAddress']))
     <h3 id="editBillingHeading" class="fs-24">Edit Billing Address</h3>
@@ -78,6 +78,9 @@
 
 @section('account-script')
 {{-- custom js --}}
+<script>
+    document.querySelector('#addressSection').scrollIntoView()
+  </script>
 <script>
     $('.hide-address-form').hide()
         $('#addBillingHeading').hide()

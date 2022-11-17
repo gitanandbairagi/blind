@@ -44,8 +44,8 @@
 
     @if (url()->current() != route('homepage') && url()->current() != route('about-us'))
         <script>
-            document.querySelector('#normalLogo').setAttribute('src', "{{ url('assets/user/images/logo.png') }}")
-            document.querySelector('#headerOffer').style.display = 'none'
+            document.querySelector('#normalLogo').setAttribute('src', "{{ url('assets/user/images/logo-blind.png') }}")
+            // document.querySelector('#headerOffer').style.display = 'none'
 
             let header = document.querySelector('header') 
             header.classList.remove('navbar-dark')

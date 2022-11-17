@@ -2,7 +2,7 @@
 
 @section('main-content')
 
-<div id="pa" class="col-6">
+<div id="pa" class="col-sm-6">
     <h3 class="fs-24">Payment Method</h3>
     <p class="fs-16">This is a TEMPLATE. NOT FUNCTIONING<br>No Payment Method Found</p>
         <form id="paymentMethod">
@@ -32,4 +32,7 @@
         </form>
 </div>
 
+<script>
+    document.querySelector('#pa').scrollIntoView()
+  </script>
 @endsection

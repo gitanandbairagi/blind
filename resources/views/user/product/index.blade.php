@@ -2,10 +2,14 @@
 
 @section('title','Product Detail')
 
+@section('styles')
+   
+@endsection
+
 @section('content')
 
 <main id="content">
-  <section class="pt-10 pb-lg-15 mt-10" style="padding:0px">
+  <section class="pt-10 mt-10" >
     <div class="container">
       <div class="row no-gutters">
         <div class="col-md-7 mb-6 mb-md-0 pr-md-6 pr-lg-9">
@@ -16,7 +20,7 @@
                 <div class="card p-0 hover-change-image rounded-0 border-0">
                   <a href="{{ url('assets/user/images/'. $product[0]['img_name']) }}"
                     class="card-img ratio ratio-1-1 bg-img-cover-center" data-gtf-mfp="true" data-gallery-id="02"
-                    style="background-image:url({{ '/blind/assets/user/images/'. $product[0]['img_name'] }})">
+                    style="background-image:url({{ '/projects/blind/assets/user/images/'. $product[0]['img_name'] }})">
                   </a>
                 </div>
             </div>
@@ -33,29 +37,47 @@
         </div>
       </div>
     </div>
-    <div class="col-md-5">
-      <h2 class="fs-30 fs-lg-40 mb-2">Roller Blind</h2>
+    <div style="padding:20px;background:#f7f7f7;border-radius:5px" class="col-md-5">
+      <h2 class="fs-30 fs-lg-40 mb-2">{{ ucwords($product[0]['name']) }}</h2>
+      @if (isset($product[0]['product_description']))
       <p>
-        Please enter in your width and drop - please do not do any deductions, for a roller blind on the inside of
-        the window frame - please give the tight inside measurements. Make sure you measure at the top of the
-        window frame as this is where it will fit. For an outside fit roller blind - please measure to where you
-        want the outside of the brackets to be. We will make sure the blind fits inside the measurements you give.
+        {{ $product[0]['product_description'] }}
       </p>
+      @endif
       <form>
         <div class="row">
-          <div class="col-sm-6 mb-4 form-group">
-            <label class="text-primary fs-16 font-weight-bold mb-3" for="size">
-              Width (mm)<sup class="text-danger">*</sup> </label>
+          {{-- @foreach ($product as $item) --}}
+          {{-- @if ($item['type'] == 'input') --}}
+          <div class="col-sm-6 mb-4 form-group input-dimension">
+            <label class="text-primary fs-16 font-weight-bold mb-3" for="productWidth">Width in <span class="text-danger">MM</span><sup class="text-danger">*</sup> </label>
             <input id="productWidth" type="text" />
-            <div style="font-size:80% ;">Please enter a number from <b>250</b> to <b>5500</b></div>
+            <div class="font-italic" style="font-size:80% ;">Please Enter a dimension between 500 and 5500</div>
           </div>
-          <div class="col-sm-6 mb-4 form-group">
-            <label class="text-primary fs-16 font-weight-bold mb-3" for="size">
-              Drop (mm)<sup class="text-danger">*</sup> </label>
+          <div class="col-sm-6 mb-4 form-group input-dimension">
+            <label class="text-primary fs-16 font-weight-bold mb-3" for="productDrop">Drop in <span class="text-danger">MM</span><sup class="text-danger">*</sup> </label>
             <input id="productDrop" type="text" />
-            <div style="font-size:80% ;">Please enter a number from <b>500</b> to <b>3200</b></div>
+            <div class="font-italic" style="font-size:80% ;">Please Enter a dimension between 500 and 5500</div>
           </div>
+          {{-- @endif --}}
+          {{-- @if ($item['type'] == 'select')
+          @php
+          $selectItems = explode(",", $item['content'])
+          @endphp --}}
           <div id="selectMaterial" class="col-sm-12 mb-4 form-group">
+            <label class="text-primary fs-16 font-weight-bold mb-3" for="material">Select Fabric / Type<sup
+                class="text-danger">*</sup> </label>
+            <select id="sel" class="form-control  w-100" @if (count($fabrics) < 5)
+                size="{{ count($fabrics) + 1 }}"
+            @else
+                size="5"
+            @endif>
+              <option selected value="0">Choose an option</option>
+              @foreach ($fabrics as $fabric)
+              <option value="{{ $fabric }}">{{ ucwords($fabric) }}</option>
+              @endforeach
+            </select>
+          </div>
+          {{-- <div id="selectMaterial" class="col-sm-12 mb-4 form-group">
             <label class="text-primary fs-16 font-weight-bold mb-3" for="material">Fabric <sup
                 class="text-danger">*</sup> </label>
             <select id="sel" class="form-control  w-100">
@@ -65,24 +87,57 @@
               @endforeach
             </select>
           </div>
-        </div>
-        {{-- <button type="submit" class="btn btn-primary btn-block mb-4">add to cart
-        </button> --}}
-      </form>
-      <p class="d-flex text-primary justify-content-center">
-        <span class="d-inline-block mr-2 fs-14"><i class="far fa-lock"></i></span>
-        <span class="fs-15">Guarantee Safe and Secure Checkout</span>
-      </p>
-      <p>
-        Pricing for each product will show below once you enter in a width and a drop in the specified ranges.
-        Then select "Show all pricing" under the Fabric drop down box. Give it a short time to calculate pricing.
-        To start your order, please select a particular fabric on the drop down list.
-      </p>
-      <p>
-        If you want a day and night blind, please select your fabric and then an option will appear to add another
-        fabric. Same process if you want to split your blind into two - Just put in your overall measurements and then
-        follow the prompts.
-      </p>
+          @endif
+          @if ($item['type'] == 'checkbox')
+          @php
+          $selectItems = explode(",", $item['content'])
+          @endphp
+          <div id="selectMaterial" class="col-sm-12 mb-4 form-group">
+            <label class="text-primary fs-16 font-weight-bold mb-3" for="material">{{ $item['heading'] }} <sup
+                class="text-danger">*</sup> </label>
+            @if (strpos($selectItems[0], '.jpg') || strpos($selectItems[0], '.jpeg') || strpos($selectItems[0], '.png'))
+            <div class="d-flex flex-wrap">
+              @foreach ($selectItems as $selectItem)
+              <div style="width: 200px;">
+                <label>
+                  <input type="checkbox" id="{{ $selectItem }}">
+                  <img src="{{ url('assets/user/images/'.$selectItem) }}" alt="{{ $selectItem }}" class="ml-2 mt-2">
+                  <label for="{{ $selectItem }}" class="ml-5 mt-1">{{ ucfirst(substr($selectItem, 0, strpos($selectItem,
+                    "."))) }}</label>
+                </label>
+              </div>
+              @endforeach
+            </div>
+            @else
+            @foreach ($selectItems as $selectItem)
+            <div>
+              <input type="checkbox" id="{{ $selectItem }}">
+              <label for="{{ $selectItem }}">{{ $selectItem }}</label>
+            </div>
+            @endforeach
+            @endif
+          </div>
+        </div> --}}
+        {{-- @endif --}}
+        {{-- @endforeach --}}
+    </div>
+    {{-- <button type="submit" class="btn btn-primary btn-block mb-4">add to cart
+    </button> --}}
+    </form>
+    <p class="d-flex text-primary justify-content-center">
+      <span class="d-inline-block mr-2 fs-14"><i class="far fa-lock"></i></span>
+      <span class="fs-15">Guarantee Safe and Secure Checkout</span>
+    </p>
+    {{-- <p>
+      Pricing for each product will show below once you enter in a width and a drop in the specified ranges.
+      Then select "Show all pricing" under the Fabric drop down box. Give it a short time to calculate pricing.
+      To start your order, please select a particular fabric on the drop down list.
+    </p>
+    <p>
+      If you want a day and night blind, please select your fabric and then an option will appear to add another
+      fabric. Same process if you want to split your blind into two - Just put in your overall measurements and then
+      follow the prompts. --}}
+    </p>
     </div>
     </div>
     </div>
@@ -95,27 +150,28 @@
       <input id="hiddenDrop" type="hidden" name="hiddenDrop" />
       <input id="hiddenFabName" type="hidden" name="hiddenFabName" />
       <input id="hiddenFabId" type="hidden" name="hiddenFabId" />
-      <div id="chooseFrom" class="grey-box mb-10">
-        <div style="width:80%; margin:auto">
-          <div style="margin:auto; width:100%">
+      <div id="chooseFrom" class="grey-box mb-10 mt-10">
+        <div style="width:80%; margin:auto;background:white;">
+          <div style="margin:auto; width:100%;background:white;">
             @php
-                $i = 0;
+            $i = 0;
             @endphp
             @foreach ($errors->all() as $message)
             @php
-                if ($i == 0) {
-                  echo '<h6 class="text-danger">There are some problems with the submission. They are listed below</h6>';
-                  $i = 1;
-                }
+            if ($i == 0) {
+            echo '<h6 class="text-danger">There are some problems with the submission. They are listed below</h6>';
+            $i = 1;
+            }
             @endphp
             <div class="text-danger">
               <sup>* </sup>{{ $message }}
             </div>
             @endforeach
-            <h5 class="mb-2">Would you like to add a sunscreen behind this blockout blind?</h5>
+            {{-- <h6 class="mb-2 mt-5">Would you like to add a sunscreen behind this blockout blind?</h6>
             <div class="row">
               <div class="col-sm-6"><input id="addUniviewBtn" type='radio' name="sunscreen" value="uniview 10%" />
-                <label for="addUniviewBtn"> Add a uniview 10%</label></div>
+                <label for="addUniviewBtn"> Add a uniview 10%</label>
+              </div>
               <div class="col-sm-6"><input id="addPalermoBtn" type="radio" name="sunscreen" value="palermo" /> <label
                   for="addPalermoBtn"> Add a Palermo &#40;Sheer&#41;</label></div>
             </div>
@@ -123,60 +179,91 @@
               Sunscreens are amazing for giving privacy during the day, blocking 90% of the UV rays and you can see out
               of
               them clearly.
-            </p>
+            </p> --}}
           </div>
-          <h5 id="renderFabHeading">{{-- Render Fabric Name Here --}}</h5>
-          <!-- NEW ELEMENT -->
-          <div id="cont" class="mt-5 mb-5"></div>
-          <b>
-            <div style="color: black;" id="cont-name" class="mb-2"></div>
-          </b>
-          <div class="mb-10" id="" name="dawn">
-            <div id="renderFabImgs">
-              <div class="row">
-                {{-- Render Fabric Images Here --}}
+          <div id="renderDataHere mt-5" style="background:#f7f7f7;border-radius:5px;padding-top:1rem;padding-left:1rem ">
+            <h5 id="renderFabHeading">{{-- Render Fabric Name Here --}}</h5>
+            <!-- NEW ELEMENT -->
+            <div id="cont" class="mt-5 mb-5"></div>
+            <b>
+              <div style="color: black;" id="cont-name" class="mb-2"></div>
+            </b>
+            <div class="mb-10" id="" name="dawn">
+              <div id="renderFabImgs" style=" background:#f7f7f7;">
+                <div class="row p-4">
+                    {{-- Render Fabric Images Here --}}
+                </div>
               </div>
             </div>
           </div>
           <!-- Radio options -->
-          <Container>
-            <div id="radio-btns" style="display:none ;" class="row mb-5">
-              <div style="display:flex;">
-                <div style="width:33.3%;">
-                  <h6>Side Winder/Brackets<sup class="text-danger">*</sup></h6>
+
+       
+
+
+          <Container  >
+            <div   id="radio-btns" style="display:none ; " class="row mb-5">
+              <div style="padding:20px;background:#f7f7f7;border-radius:5px" class="row" >
+                <div style="width:100%;" class="col-sm-12 col-lg-4 col-md-6">
+                  <h6  style="padding-top:1rem">Side Winder/Brackets<sup class="text-danger">*</sup></h6>
                   <div>
-                    <input name="sideWinder" type="radio" value="white" checked /><label>&nbsp; White</label><br>
+                    <select class="form-control w-75" name="sideWinder">
+                      <option value="white" selected>White</option>
+                      <option value="off white">Off White</option>
+                      <option value="black">Black</option>
+                      <option value="grey">Grey</option>
+                    </select>
+                    {{-- <input name="sideWinder" type="radio" value="white" checked /><label>&nbsp; White</label><br>
                     <input name="sideWinder" type="radio" value="off white" /><label>&nbsp; Off White</label><br>
                     <input name="sideWinder" type="radio" value="black" /><label>&nbsp; Black</label><br>
-                    <input name="sideWinder" type="radio" value="grey" /><label>&nbsp; Grey</label><br>
+                    <input name="sideWinder" type="radio" value="grey" /><label>&nbsp; Grey</label><br> --}}
                   </div>
                 </div>
-                <div style="width:33.3%;">
-                  <h6>Bottom Rail<sup class="text-danger">*</sup></h6>
+                <div  style="width:100%;" class="col-sm-12 col-lg-4 col-md-6">
+                  <h6  style="padding-top:1rem" >Bottom Rail<sup class="text-danger">*</sup></h6>
                   <div>
-                    <input name="bottomRail" type="radio" value="silver" checked /><label>&nbsp; Silver</label><br>
+                    <select class="form-control w-75" name="bottomRail">
+                      <option value="silver" selected>Silver</option>
+                      <option value="white">White</option>
+                      <option value="off white">Off White</option>
+                      <option value="black">Black</option>
+                      <option value="sterling (grey)">Sterling&#40;Grey&#41;</option>
+                    </select>
+                    {{-- <input name="bottomRail" type="radio" value="silver" checked /><label>&nbsp; Silver</label><br>
                     <input name="bottomRail" type="radio" value="white" /><label>&nbsp; White</label><br>
                     <input name="bottomRail" type="radio" value="off white" /><label>&nbsp; Off White</label><br>
                     <input name="bottomRail" type="radio" value="black" /><label>&nbsp; Black</label><br>
                     <input name="bottomRail" type="radio" value="sterling (grey)" /><label>&nbsp;
-                      Sterling&#40;Grey&#41;</label><br>
+                      Sterling&#40;Grey&#41;</label><br> --}}
                   </div>
                 </div>
-                <div style="width:33.3%;">
-                  <h6>Roll<sup class="text-danger">*</sup></h6>
+                <div style="width:100%;" class="col-sm-12 col-lg-4 col-md-6">
+                  <h6 style="padding-top:1rem">Roll<sup class="text-danger">*</sup></h6>
                   <div>
-                    <input name="roll" type="radio" id="roll1" value="front" checked /><label for="roll1">&nbsp;
+                    <select class="form-control w-75" name="roll">
+                      <option value="front" selected>Front</option>
+                      <option value="back">Back</option>
+                    </select>
+                    {{-- <input name="roll" type="radio" id="roll1" value="front" checked /><label for="roll1">&nbsp;
                       Front</label><br>
-                    <input name="roll" type="radio" id="roll2" value="back" /><label for="roll2">&nbsp; Back</label><br>
+                    <input name="roll" type="radio" id="roll2" value="back" /><label for="roll2">&nbsp; Back</label><br> --}}
                     <label class="mt-3">Front - rolls into the room, missing handles/latches</label>
                   </div>
                 </div>
               </div>
-              <div class="mt-3" style="display:flex;">
-                <div style="width: 33.33%;">
-                  <h6>Chain/Motor<sup class="text-danger">*</sup></h6>
+              <div style="padding:20px;background:#f7f7f7;border-radius:5px" class="row" style="display:flex;">
+                <div style="width: 100%;" class="col-sm-12 col-lg-4 col-md-6">
+                  <h6 style="padding-top:1rem">Chain/Motor<sup class="text-danger">*</sup></h6>
                   <div>
-                    <input name="chainMotor" type="radio" id="chainMotor1" value="rechargeable battery" /><label
+                    <select class="form-control w-75" name="chainMotor">
+                      <option value="rechargeable battery">&nbsp; Rechargeable Motor</option>
+                      <option value="white plastic" selected>&nbsp; White &#40;Plastic&#41;</option>
+                      <option value="off white (Plastic)">&nbsp; Off White &#40;Plastic&#41;</option>
+                      <option value="grey Plastic">&nbsp; Grey &#40;Plastic&#41;</option>
+                      <option id="chainMotor5" value="black plastic" for="chainMotor5">&nbsp; Black &#40;Plastic&#41;</option>
+                      <option id="chainMotor6" value="silver metal">&nbsp; Silver &#40;Metal&#41;</option>
+                    </select>
+                    {{-- <input name="chainMotor" type="radio" id="chainMotor1" value="rechargeable battery" /><label
                       for="chainMotor1">&nbsp; Rechargeable Motor</label><br>
                     <input name="chainMotor" type="radio" id="chainMotor2" value="white plastic" checked /><label
                       for="chainMotor2">&nbsp; White &#40;Plastic&#41;</label><br>
@@ -187,16 +274,21 @@
                     <input name="chainMotor" type="radio" id="chainMotor5" value="black plastic" /><label
                       for="chainMotor5">&nbsp; Black &#40;Plastic&#41;</label><br>
                     <input name="chainMotor" type="radio" id="chainMotor6" value="silver metal" /><label
-                      for="chainMotor6">&nbsp; Silver &#40;Metal&#41;</label><br>
+                      for="chainMotor6">&nbsp; Silver &#40;Metal&#41;</label><br> --}}
                   </div>
                 </div>
-                <div style="width: 33.33%;">
-                  <h6>Control Side<sup class="text-danger">*</sup></h6>
+                <div style="width: 100%;" class="col-sm-12 col-lg-4 col-md-6">
+                  <h6 style="padding-top:1rem">Control Side<sup class="text-danger">*</sup></h6>
                   <div>
-                    <input name="controlSide" type="radio" id="controlSide1" value="left" /><label
+                    
+                    <select class="form-control w-75" name="controlSide">
+                      <option value="rechargeable battery">&nbsp; Left Side</option>
+                      <option value="white plastic">&nbsp; Right Side</option>
+                    </select>
+                    {{-- <input name="controlSide" type="radio" id="controlSide1" value="left" /><label
                       for="controlSide1">&nbsp; Left Side</label><br>
                     <input name="controlSide" type="radio" id="controlSide2" value="right" /><label
-                      for="controlSide2">&nbsp; Right Side</label><br>
+                      for="controlSide2">&nbsp; Right Side</label><br> --}}
                   </div>
                 </div>
               </div>
@@ -207,11 +299,14 @@
                           <h6>Blind Comments</h6>
                           <textarea name="input_26" id="input_81_26" class="textarea small" tabindex="143" placeholder="For example: Staceys bedroom blind, or control to be 2m long(Standard is 2/3rds of the height). This comment will also be printed on your packaging slip to make it easier to know what blind is for what room." aria-invalid="false" rows="5" cols="100"></textarea>
                           </div> -->
-        <div class="form-floating" style="width: 80%; margin: auto;">
+        <div  id="main" class="mt-5" style="width: 80%; margin: auto;">
+          {{-- Render All Hidden Attributes Here --}}
+        </div>                  
+        <div  class="form-floating mt-5" style="width: 80%; margin: auto;background:#f7f7f7;padding: 20px;border-radius:5px">
           <label style="color:#000000"><b>Blind Comments</b></label>
           <textarea class="form-control"
             placeholder="For example: Staceys bedroom blind, or control to be 2m long(Standard is 2/3rds of the height). This comment will also be printed on your packaging slip to make it easier to know what blind is for what room."
-            id="floatingTextarea2" name="comment" style="height: 100px"></textarea>
+            id="floatingTextarea2" name="comment" style="height: 100px;background:#f7f7f7;"></textarea>
         </div>
         <div style="width: 80%; margin: auto;">
           <input id="hiddenPrice" type="hidden" name="price">
@@ -244,22 +339,28 @@
 {{-- custom js and jquery --}}
 <script>
   document.getElementById('sel').addEventListener('change', (e)=> {
-    let fabricId = e.target.value
-    let width = document.querySelector('#productWidth').value
-    let drop = document.querySelector('#productDrop').value
+    let fabricName = e.target.value
+    // let fabricName = e.target.options[e.target.selectedIndex].text
+    // let width = document.querySelector('#productWidth').value
+    // let drop = document.querySelector('#productDrop').value
+    let dimensions = document.querySelectorAll('.input-dimension > input')
+    let width = dimensions[0].value
+    let drop = dimensions[1].value
     if (width == '') {
       width = 0
     }
     if (drop == '') {
       drop = 0
     }
-    if (fabricId != 0) {
+    console.log(width + drop)
+    if (fabricName != "0") {
         $.ajax({
         url: "{{ route('get-fabric-details') }}",
         type: "GET",
         dataType: 'json',
-        data: { fabricId, width, drop },
+        data: { fabricName, width, drop },
         success: function(response) {
+              console.log(response)
           let renderFabImgs = document.querySelector('#renderFabImgs > div')
           let selectedOption = e.target[e.target.selectedIndex]
           document.querySelector('#renderFabHeading').textContent = selectedOption.text
@@ -268,16 +369,59 @@
           renderFabImgs.textContent = ''
           let baseURL = "{{ url('assets/user/images') }}"
           Array.from(response['fabric']).forEach(element => {
+            // let dir =  fabricName.toLowerCase()
             let imgURL = baseURL + '/' + element.name 
-            renderFabImgs.innerHTML += `<div class="col-lg-3">
-                        <div style="display: flex;">
-                          <div class="d-flex align-items-center mr-1">
-                            <input id="${element.id}" value="${element.id}" name="color" type="radio" />
-                          </div>
+            let colorName = (element.name).split('.').slice(0, -1).join('.')
+            colorName = colorName.toUpperCase()
+            // renderFabImgs.innerHTML += `<div class="col-lg-2">
+            //             <div style="display: flex;">
+            //               <div class="d-flex align-items-center mr-1">
+            //                 <input id="${element.id}" value="${element.id}" name="color" type="radio" style="display: none" />
+            //               </div>
+            //               <label for="${element.id}">
+            //                 <div style="padding: 5px; border-radius: 50%;" onClick="fabricImgSelected(this)">
+            //                   <span>
+            //                     <input id="${element.id}" value="${element.id}" name="color" type="radio" style="display: none" />
+            //                     <img src="${imgURL}" style="height: 100px; width: 100px; border-radius: 50%;" />
+            //                   </span>
+            //                 </div>
+            //                 <div style="padding: 5px;">
+            //                   <span>
+            //                     <p>${colorName}</p>
+            //                   </span>
+            //                 </div>
+            //               </label>
+            //             </div>
+            //           </div>`
+            // renderFabImgs.innerHTML += `<div class="col-lg-2">
+            //             <div class="d-flex">
+            //               <label for="${element.id}">
+            //                 <div style="padding: 5px; border-radius: 50%;" onClick="fabricImgSelected(this)">
+            //                   <span>
+            //                     <input id="${element.id}" value="${element.id}" name="color" type="radio" style="display: none" />
+            //                     <img src="${imgURL}" style="height: 100px; width: 100px; border-radius: 50%;" />
+            //                   </span>
+            //                 </div>
+            //                 <div class="d-flex justify-content-center" style="padding: 5px;">
+            //                   <span>
+            //                     <p>${colorName}</p>
+            //                   </span>
+            //                 </div>
+            //               </label>
+            //             </div>
+            //           </div>`
+            renderFabImgs.innerHTML += `<div class="col-lg-2">
+                        <div class="d-flex">
                           <label for="${element.id}">
-                            <div style="padding: 5px;">
+                            <div style="padding: 5px; border-radius: 50%;" onClick="fabricImgSelected(this)">
                               <span>
-                                <img src="${imgURL}" style="height: 100%; width: 100%;" />
+                                <input id="${element.id}" value="${element.id}" name="color" type="radio" style="display: none" />
+                                <img src="${imgURL}" style="height: 100px; width: 100px; border-radius: 50%;" />
+                              </span>
+                            </div>
+                            <div class="d-flex justify-content-center" style="padding: 5px;">
+                              <span>
+                                <p>${colorName}</p>
                               </span>
                             </div>
                           </label>
@@ -305,6 +449,19 @@
       renderFabImgs.textContent = ''
     }
   })
+
+  function fabricImgSelected(ele) {
+    let renderFabImgs = document.querySelector('#renderFabImgs')
+    let radios = renderFabImgs.querySelectorAll('input[type="radio"]')
+    Array.from(radios).forEach(radio => {
+      if (radio.hasAttribute('checked')) {
+        (radio.parentElement).parentElement.style.border = ""
+        radio.removeAttribute('checked')
+      }
+    })
+    ele.querySelector('input[type=radio]').setAttribute('checked', true)
+    ele.style.border = '1px solid grey'
+  }
 
   if ("{{ session()->has('added') }}") {
     Swal.fire({

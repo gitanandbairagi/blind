@@ -2,6 +2,8 @@
 
 @section('title','My-Account')
 
+@yield('account-style')
+
 @section('styles')
 <style>
     .sidebar-active {
@@ -28,6 +30,13 @@
                                 <a href="{{ route('account-personal-details') }}">
                                     <div @if (url()->current() == route('account-personal-details')) class="sidebar-active" @endif>
                                         Personal Details
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="{{ route('account-order-history') }}">
+                                    <div @if (url()->current() == route('account-order-history')) class="sidebar-active" @endif>
+                                        Order History
                                     </div>
                                 </a>
                             </li>

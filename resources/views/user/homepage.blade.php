@@ -10,7 +10,7 @@
       data-slick-options='{"slidesToShow": 1,"infinite":true,"autoplay":false,"dots":false,"arrows":false,"fade":false}'>
       <div class="box">
         <div class="d-flex flex-column justify-content-center bg-img-cover-center vh-100 custom-height-sm"
-          style="background-image: url({{'/blind/assets/user/images/bg-home-04.jpg'}})">
+          style="background-image: url({{'/blind/assets/user/images/banner-3.jpg'}})">
           <div class="d-flex flex-column h-100 justify-content-end pb-10 pb-lg-12">
             <div class="container container-xxl">
               <p class="text-white font-weight-bold fs-20 mb-3" data-animate="fadeInUp">Modern Design</p>
@@ -23,7 +23,7 @@
       </div>
       <div class="box">
         <div class="d-flex flex-column justify-content-center bg-img-cover-center vh-100 custom-height-sm"
-          style="background-image: url('images/bg-home-04.jpg')">
+          style="background-image: url({{'/blind/assets/user/images/banner-3.jpg'}}">
           <div class="d-flex flex-column h-100 justify-content-end pb-10 pb-lg-12">
             <div class="container container-xxl">
               <p class="text-white font-weight-bold fs-20 mb-3" data-animate="fadeInUp">Modern Design</p>
@@ -36,7 +36,7 @@
       </div>
       <div class="box">
         <div class="d-flex flex-column justify-content-center bg-img-cover-center vh-100 custom-height-sm"
-          style="background-image: url('images/bg-home-04.jpg')">
+          style="background-image: url({{'/blind/assets/user/images/banner-3.jpg'}}">
           <div class="d-flex flex-column h-100 justify-content-end pb-10 pb-lg-12">
             <div class="container container-xxl">
               <p class="text-white font-weight-bold fs-20 mb-3" data-animate="fadeInUp">Modern Design</p>
@@ -49,28 +49,32 @@
       </div>
     </div>
   </section>
-  <section class="py-6">
+  {{-- <section class="py-6">
     <div class="container-fluid px-6">
       <div class="slick-slider"
         data-slick-options='{"slidesToShow": 4, "autoplay":true,"dots":true,"arrows":false,"responsive":[{"breakpoint": 1200,"settings": {"slidesToShow":4}},{"breakpoint": 992,"settings": {"slidesToShow":3}},{"breakpoint": 768,"settings": {"slidesToShow": 2}},{"breakpoint": 576,"settings": {"slidesToShow": 1}}]}'>
+        @for ($i = 0; $i < 3; $i++)
+        @foreach (session()->get('categories') as $category)
         <div class="box" data-animate="fadeInUp">
           <div class="card border-0">
-            <img src="{{ url('assets/user/images/c_07.jpg') }}" alt="Chairs" class="card-img">
+            <img src="{{ url('assets/user/images/c_08.jpg') }}" alt="Accessories" class="card-img">
             <div class="card-img-overlay d-inline-flex flex-column px-6 py-4">
-              <h3 class="card-title fs-28">Chairs</h3>
+              <h3 class="card-title fs-28">{{ ucwords($category['name']) }}</h3>
               <div class="mt-auto">
-                <a href="shop-page-03.html"
+                <a href="{{ route('show-category', str_replace(" ", "-", $category['name'])) }}"
                   class="text-uppercase fs-14 letter-spacing-05 border-bottom border-light-dark border-hover-primary font-weight-bold">Shop
                   Now</a>
               </div>
             </div>
           </div>
         </div>
+        @endforeach
+        @endfor
         <div class="box" data-animate="fadeInUp">
           <div class="card border-0">
-            <img src="{{ url('assets/user/images/c_08.jpg') }}" alt="Accessories" class="card-img">
+            <img src="{{ url('assets/user/images/c_07.jpg') }}" alt="Chairs" class="card-img">
             <div class="card-img-overlay d-inline-flex flex-column px-6 py-4">
-              <h3 class="card-title fs-28">Accessories</h3>
+              <h3 class="card-title fs-28">Chairs</h3>
               <div class="mt-auto">
                 <a href="shop-page-03.html"
                   class="text-uppercase fs-14 letter-spacing-05 border-bottom border-light-dark border-hover-primary font-weight-bold">Shop
@@ -120,18 +124,18 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> --}}
   <section class="pt-11 pt-lg-12 pb-lg-10">
     <div class="container">
-      <h2 class="mb-9 text-center fs-30 fs-md-40">Essenstial Items</h2>
+      <h2 class="mb-9 text-center fs-30 fs-md-40">Shop Blinds With Us</h2>
       <div class="row overflow-hidden">
-        {{-- for loop --}}
-        @for ($i = 0; $i < 8; $i++)
-         <a href="{{ route('show-product', $products[0]['id']) }}">
+        {{-- foreach loop --}}
+        @foreach (session()->get('products') as $product)
+        <a href="{{ route('show-product', str_replace(" ", "-", $product['name'])) }}">
           <div class="col-sm-6 col-lg-3 mb-8" data-animate="fadeInUp">
             <div class="card border-0 hover-change-content product">
               <div class="card-img-top position-relative">
-                <div style="background-image: url({{'/blind/assets/user/images/'.$products[0]['img_name']}})"
+                <div style="background-image: url({{'/blind/assets/user/images/'.$product['img_name']}})"
                   class="card-img ratio bg-img-cover-center ratio-1-1">
                 </div>
                 <div
@@ -148,7 +152,7 @@
                     class="add-to-compare d-flex align-items-center justify-content-center text-primary bg-white hover-white bg-hover-primary w-45px h-45px rounded-circle mr-2 border">
                     <i class="far fa-random"></i>
                   </a> --}}
-                  <a href="{{ route('show-product', $products[0]['id']) }}" data-toggle="tooltip" title="Preview"
+                  <a href="{{ route('show-product', str_replace(" ", "-", $product['name'])) }}" data-toggle="tooltip" title="Preview"
                     class="preview d-flex align-items-center justify-content-center text-primary bg-white hover-white bg-hover-primary w-45px h-45px rounded-circle border">
                     <i class="far fa-eye"></i>
                   </a>
@@ -156,23 +160,22 @@
               </div>
               <div class="card-body px-0 pt-4 pb-0 d-flex align-items-end">
                 <div class="mr-auto">
-                  <a href="#"
-                    class="text-uppercase text-muted letter-spacing-05 fs-12 d-block font-weight-500">Table</a>
-                  <a href="#" class="font-weight-bold mt-1 d-block">Bow Chair</a>
+                  {{-- <a href="#"
+                    class="text-uppercase text-muted letter-spacing-05 fs-12 d-block font-weight-500">Table</a> --}}
+                  <a href="{{ route('show-category', str_replace(" ", "-", $product['name'])) }}" class="font-weight-bold mt-1 d-block">{{ ucwords($product['name']) }}</a>
                 </div>
               </div>
             </div>
           </div>
           </a>
-          @endfor
-          {{-- end for loop --}}
-
+        @endforeach
+          {{-- end foreach loop --}}
       </div>
     </div>
     </div>
     </div>
   </section>
-  <section class="py-10 py-lg-15 bg-img-cover-center bg-custom-01"
+  {{-- <section class="py-10 py-lg-15 bg-img-cover-center bg-custom-01"
     style="background-image: url({{ '/blind/assets/user/images/bg-countdown.jpg' }});">
     <div class="container">
       <div class="row">
@@ -208,7 +211,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> --}}
   <section class="pt-8 pb-7 border-bottom">
     <div class="container container-xxl">
       <div class="slick-slider"
@@ -225,12 +228,12 @@
     </div>
     </div>
   </section>
-  <section class="py-11 pt-lg-15 pb-lg-10">
+  {{-- <section class="py-11 pt-lg-15 pb-lg-10">
     <div class="container">
       <h2 class="mb-9 text-center fs-30 fs-md-40">Featured Items</h2>
-      <div class="row overflow-hidden">
+      <div class="row overflow-hidden"> --}}
         {{-- for loop --}}
-        @for ($i = 0; $i < 3; $i++)
+        {{-- @for ($i = 0; $i < 3; $i++)
         <a href="{{ route('show-product', $products[0]['id']) }}">
           <div class="col-md-4 mb-6" data-animate="fadeInUp">
             <div class="card border-0 hover-change-content product">
@@ -239,7 +242,7 @@
                   class="card-img ratio bg-img-cover-center ratio-1-1">
                 </div>
                 <div
-                  class="position-absolute pos-fixed-bottom px-4 px-sm-6 pb-5 d-flex w-100 justify-content-center content-change-horizontal">
+                  class="position-absolute pos-fixed-bottom px-4 px-sm-6 pb-5 d-flex w-100 justify-content-center content-change-horizontal"> --}}
                   {{-- <a href="#" data-toggle="tooltip" title="Add to cart"
                     class="add-to-cart d-flex align-items-center justify-content-center text-primary bg-white hover-white bg-hover-primary w-45px h-45px rounded-circle mr-2 border">
                     <i class="far fa-shopping-basket"></i>
@@ -252,7 +255,7 @@
                     class="add-to-compare d-flex align-items-center justify-content-center text-primary bg-white hover-white bg-hover-primary w-45px h-45px rounded-circle mr-2 border">
                     <i class="far fa-random"></i>
                   </a> --}}
-                  <a href="#" data-toggle="tooltip" title="Preview"
+                  {{-- <a href="#" data-toggle="tooltip" title="Preview"
                     class="preview d-flex align-items-center justify-content-center text-primary bg-white hover-white bg-hover-primary w-45px h-45px rounded-circle border">
                     <i class="far fa-eye"></i>
                   </a>
@@ -268,12 +271,12 @@
             </div>
           </div>
           </a>
-        @endfor
+        @endfor --}}
           {{-- end for loop --}}
-      </div>
+      {{-- </div>
     </div>
-  </section>
-  <section style="background-color: #f7f7f7;">
+  </section> --}}
+  {{-- <section style="background-color: #f7f7f7;">
     <div class="row align-items-center no-gutters room-inspiration">
       <div class="col-lg-6 order-1 order-lg-first">
         <img src="{{ 'assets/user/images/b-05.jpg' }}">
@@ -288,7 +291,7 @@
         <a href="shop-page-04.html" class="btn btn-outline-primary text-uppercase letter-spacing-05">our journal</a>
       </div>
     </div>
-  </section>
+  </section> --}}
   {{-- <section class="py-11 py-lg-15 border-bottom">
     <div class="container">
       <h2 class="fs-30 fs-md-40 mb-11 text-center">Happy Clients</h2>

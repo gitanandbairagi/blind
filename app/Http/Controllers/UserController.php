@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
+use App\Models\NewProduct;
 use App\Models\Fabric;
 use App\Models\FabricImages;
 use App\Models\User;
 use App\Models\Cart;
+use App\Models\Category;
 use App\Models\State;
 use App\Models\BillingAddress;
 use App\Models\ShippingAddress;
+use App\Models\Attribute;
+use App\Models\HiddenAttribute;
+use App\Models\NewFabric;
 use Validator;
 use Socialite;
 use Illuminate\Support\Facades\Auth;
@@ -25,12 +29,17 @@ class UserController extends Controller
 
     public function homepage()
     {
-        $products = Product::select('id', 'name', 'img_name')
+        $products = NewProduct::select('id', 'name', 'img_name')
                 ->take(8)
                 ->get()
                 ->toArray();
+        $categories = Category::select('id', 'name', 'img_name')
+                            ->get()
+                            ->toArray();
+        // session()->put('categories', $categories);
+        session()->put('products', $products);
 
-        return view('user.homepage', ['products' => $products]);
+        return view('user.homepage');
     }
 
     public function shop()
@@ -91,11 +100,15 @@ class UserController extends Controller
                 $flag = 'inc';
             }
             
+            $fabricName = $request->hiddenFabId;
+            $fabric = Fabric::where(['name' => $fabricName])->get()->toArray();
+            $fabric_id = $fabric[0]['id'];
+            
             $price = str_replace(',', '', $request->price,);
             $data = [
                 'width' => $request->hiddenWidth,
                 'drop' => $request->hiddenDrop,
-                'fabric_id' => $request->hiddenFabId,
+                'fabric_id' => $fabric_id,
                 'color_id' => $request->color,
                 'side_winder' => $request->sideWinder,
                 'bottom_rail' => $request->bottomRail,
@@ -295,6 +308,10 @@ class UserController extends Controller
 
     public function account_personal_details() {
         return view('user.myaccount.personaldetails');
+    }
+
+    public function account_order_history() {
+        return view('user.myaccount.orderHistory');
     }
 
     public function account_address() {
@@ -508,26 +525,35 @@ class UserController extends Controller
         return view('user.cart.index', ['cart_items' => $cart_items, 'subtotal_price' => $subtotal_price, 'total_price' => $total_price]);
     }
 
-    public function show_product($id) 
+    public function show_product($name) 
     {
         // Setting mySql strict mode to false to use group by
         \DB::statement("SET SQL_MODE=''");
-        $product = Product::where('products.id', $id)
+        $name = str_replace('-', ' ', $name);
+        // $product = NewProduct::join('attributes', 'attributes.new_product_id', '=', 'new_products.id')
+        //                     // ->where(['new_products.id' => $id])
+        //                     ->where(['new_products.name' => $name])
+        //                     ->get()
+        //                     ->toArray();
+        $product = NewProduct::where(['new_products.name' => $name])
                             ->get()
-                            ->makeHidden('created_at', 'updated_at')
                             ->toArray();
                             
-        $fabrics = Fabric::where('product_id', $id)
-                            ->get()
-                            ->makeHidden('created_at', 'updated_at')
-                            ->toArray();
+        // $fabrics = Fabric::where('new_product_id', $product[0]['id'])
+        //                     ->get()
+        //                     ->makeHidden('created_at', 'updated_at')
+        //                     ->toArray();
+        $fabrics = explode(',', $product[0]['fabrics']);
+
+        // echo "<pre>";
+        // echo print_r($fabrics); die;
 
         return view('user.product.index', ['product' => $product, 'fabrics' => $fabrics]);
     }
 
     public function get_fabric_details(Request $request) {
         $fabric = Fabric::join('fabric_images', 'fabric_images.fabric_id', '=', 'fabrics.id')
-                        ->where('fabrics.id', $request->fabricId)
+                        ->where('fabrics.name', $request->fabricName)
                         ->get()
                         ->toArray();
         
@@ -544,6 +570,33 @@ class UserController extends Controller
 
         $response = [
             'fabric' => $fabric,
+            'price' => $price
+        ];
+        
+        return response()->json($response);
+    }
+
+    public function get_product_details(Request $request) {
+        $new_fabric_id = NewFabric::where(['name' => $request->fabricName])
+                                    ->get()->toArray();
+                                
+        $hidden_attributes = HiddenAttribute::where(['new_fabric_id' => 1])
+                        ->get()
+                        ->toArray();
+        
+        if ($request->width == '') {
+            $width = 0;
+        }
+        if ($request->drop == '') {
+            $drop = 0;
+        }
+
+        $product_area = $request->width * $request->drop;
+        $price = $product_area * 12/1000;
+        $price = number_format($price, 2);
+
+        $response = [
+            'fabric' => $hidden_attributes,
             'price' => $price
         ];
         
@@ -721,7 +774,7 @@ class UserController extends Controller
                 'cart_value' => $quantity,
             ]);
 
-            if (count(session()->get('cart_items')) == 0) {
+            if (session()->get('cart_items') == null) {
                 return redirect()->route('homepage');
             }
             else {
@@ -771,7 +824,8 @@ class UserController extends Controller
 
     public function logout(Request $request) {
         $request->session()->flush();
-        return redirect()->route('set-session');
+        // return redirect()->route('set-session');
+        return redirect()->route('homepage');
     }
 
     public function product_detail()
@@ -818,5 +872,41 @@ class UserController extends Controller
 
         session()->flash('order_placed');
         return redirect()->route('homepage');
+    }
+
+    public function show_category($name) {
+        $name = str_replace("-", " ", $name);
+
+        foreach (session()->get('categories') as $category) {
+            if ($name == $category['name']) {
+                $category = Category::join('new_products', 'new_products.category_id', '=', 'categories.id')
+                                    ->where('categories.id', $category['id'])
+                                    ->select('categories.name as category_name', 'categories.description', 'new_products.id as product_id', 'new_products.name as product_name', 'new_products.img_name')
+                                    ->get()->toArray();
+                $products = [];
+                foreach ($category as $value) {
+                    array_push($products, [
+                        'id' => $value['product_id'],
+                        'name' => $value['product_name'],
+                        'img_name' => $value['img_name'],
+                    ]);
+                }
+                for ($i = 0; $i < count($category); $i++) {
+                    if ($i == 0) {
+                        unset($category[$i]['product_id']);
+                        unset($category[$i]['product_name']);
+                        unset($category[$i]['img_name']);
+                    }
+                    else {
+                        unset($category[$i]);
+                    }
+                }
+                $category[0]['products'] = $products;
+                $category = $category[0];
+                // echo "<pre>";
+                // echo print_r($category); die;
+                return view('user.category.index', ['category' => $category]);   
+            }
+        }
     }
 }

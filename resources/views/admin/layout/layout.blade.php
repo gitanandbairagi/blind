@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Bidding Plateform</title>
+  <title>Blinds</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -41,7 +41,7 @@
 <link rel="stylesheet" href="{{ url('assets/adminlte/plugins/fullcalendar-daygrid/main.min.css') }}">
 <link rel="stylesheet" href="{{ url('assets/adminlte/plugins/fullcalendar-timegrid/main.min.css') }}">
 <link rel="stylesheet" href="{{ url('assets/adminlte/plugins/fullcalendar-bootstrap/main.min.css') }}">
-
+@yield('style')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 
